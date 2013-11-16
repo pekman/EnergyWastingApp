@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 public class CPUBurn extends Component {
 
+	@Override
 	public String getName() { return "CPUburn"; }
 	
 	private int[] processes;
