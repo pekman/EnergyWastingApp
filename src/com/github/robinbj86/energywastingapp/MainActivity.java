@@ -13,17 +13,24 @@ public class MainActivity extends Activity {
 
 	/**
 	 * List of components in the order they will be displayed.
-	 * 
-	 * When adding new components, they should be instantiated here.
 	 */
-	private Component[] components = {
-			new CPUBurn(),
-	};
+	private Component[] components;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		Component.context = this;
+
+		// List of components in the order they will be displayed.
+		// When adding new components, they should be instantiated here.
+		Component[] components = {
+				new CPUBurn(),
+				new Flashlight(),
+				new Display(),
+		};
+		this.components = components;
 
 		for (Component component : components) {
 
@@ -35,12 +42,17 @@ public class MainActivity extends Activity {
 			control.setChecked(false);
 			control.setText(component.getName());
 
+			if (! component.isSupported()) {
+				control.setEnabled(false);
+				control.setClickable(false);
+			}
+
 			// add control to the UI
 			((ViewGroup) findViewById(R.id.MainLinearLayout)).addView(control);
 
 			// add the component object as listener for on/off toggle events
 			control.setOnCheckedChangeListener(component);
-			component.context = this;
+			component.uiControl = control;
 		}
 	}
 
@@ -50,4 +62,22 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
+	@Override
+	protected void onPause() {
+		for (Component c : components) {
+			c.onPause();
+		}
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		for (Component c : components) {
+			c.onResume();
+		}
+		super.onResume();
+	}
+
+	
 }
