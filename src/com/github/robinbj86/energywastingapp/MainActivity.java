@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
 				new CPUBurn(),
 				new Flashlight(),
 				new Display(),
+				new WiFiDataTransfer()
 		};
 		this.components = components;
 
@@ -65,18 +66,18 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onPause() {
+		super.onPause();
 		for (Component c : components) {
 			c.onPause();
 		}
-		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
+		super.onResume();
 		for (Component c : components) {
 			c.onResume();
 		}
-		super.onResume();
 	}
 
 	
