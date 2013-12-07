@@ -30,7 +30,8 @@ public class MainActivity extends Activity {
 				new Flashlight(),
 				new Display(),
 				new WiFiDataTransfer(),
-				new GPSCoordSearch()
+				new GPSCoordSearch(),
+				new BlueToothBurn()
 		};
 		this.components = components;
 
