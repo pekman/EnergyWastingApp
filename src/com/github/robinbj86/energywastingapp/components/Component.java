@@ -15,6 +15,9 @@ public abstract class Component implements OnCheckedChangeListener {
 	/** GUI control associated with the component */
 	public CompoundButton uiControl;
 	
+	/** Indicates, whether the component is currently turned on */
+	protected boolean running = false;
+	
 	/** Name displayed in user interface */
 	public abstract String getName();
 	
@@ -31,10 +34,14 @@ public abstract class Component implements OnCheckedChangeListener {
 	 */
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		if (isChecked)
+		if (isChecked) {
+			running = true;
 			start();
-		else
+		}
+		else {
 			stop();
+			running = false;
+		}
 	}
 	
 	/**
@@ -43,6 +50,7 @@ public abstract class Component implements OnCheckedChangeListener {
 	 */
 	protected void markTurnedOff() {
 		uiControl.setChecked(false);
+		running = false;
 	}
 	
 	protected void markTurnedOn() {
