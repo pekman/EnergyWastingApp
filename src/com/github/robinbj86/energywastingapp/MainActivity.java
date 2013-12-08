@@ -1,13 +1,19 @@
 package com.github.robinbj86.energywastingapp;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.github.robinbj86.energywastingapp.components.*;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Switch;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -15,6 +21,14 @@ public class MainActivity extends Activity {
 	 * List of components in the order they will be displayed.
 	 */
 	private Component[] components;
+
+	/**
+	 * Components that should be turned on for maximum power consumption.
+	 * The items are indexes of components array.
+	 */
+	private static final Set<Integer> maxPowerComponents = new HashSet<Integer>(Arrays.asList(new Integer[] {
+			0,1,2,3,4,5,  7,8,9
+		}));
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +77,45 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	public void turnAllOff(View view) {
+		for (Component c : components) {
+			if (c.running) {
+				c.markTurnedOff();
+			}
+		}
+	}
+
+	private Toast toast;
+
+	public void maxPowerConsumption(View view) {
+		boolean anythingTurnedOn = false;
+		
+		// turn off components not in the list
+		for (int i=0; i < components.length; i++) {
+			if (components[i].running && ! maxPowerComponents.contains(i)) {
+				components[i].markTurnedOff();
+				anythingTurnedOn = true;
+			}
+		}
+		
+		toast = Toast.makeText(this, "Please wait...", Toast.LENGTH_LONG);
+		toast.show();
+		
+		// turn on components in the list (after 2s delay if anything was turned on)
+		((ViewGroup) findViewById(R.id.MainLinearLayout)).postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					for (int i : maxPowerComponents) {
+						if (! components[i].running && components[i].isSupported()) {
+							components[i].markTurnedOn();
+						}
+					}
+					toast.cancel();
+				}
+			},
+			anythingTurnedOn ? 2000 : 0);
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -86,5 +139,4 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	
 }

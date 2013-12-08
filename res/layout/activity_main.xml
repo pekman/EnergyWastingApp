@@ -21,6 +21,23 @@
             android:orientation="vertical"
             android:divider="?android:attr/dividerVertical"
             android:showDividers="middle" >
+
+            <Button
+                android:id="@+id/MaxPowerButton"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="maxPowerConsumption"
+                android:text="Maximum power consumption" />
+
+            <Button
+                android:id="@+id/TurnAllOffButton"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="turnAllOff"
+                android:text="Turn all off" />
+
         </LinearLayout>
     </ScrollView>
 
