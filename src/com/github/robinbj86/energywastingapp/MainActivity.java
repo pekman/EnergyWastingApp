@@ -27,7 +27,6 @@ public class MainActivity extends Activity {
 		// When adding new components, they should be instantiated here.
 		Component[] components = {
 				new CPUBurn(),
-				new Flashlight(),
 				new Display(),
 				new WiFiDataTransfer(),
 				new GPSCoordSearch(),
