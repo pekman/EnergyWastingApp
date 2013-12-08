@@ -31,7 +31,8 @@ public class MainActivity extends Activity {
 				new Display(),
 				new WiFiDataTransfer(),
 				new GPSCoordSearch(),
-				new BlueToothBurn()
+				new BlueToothBurn(),
+				new AudioPlay()
 		};
 		this.components = components;
 
