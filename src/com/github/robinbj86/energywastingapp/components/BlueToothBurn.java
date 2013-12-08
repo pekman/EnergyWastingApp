@@ -58,8 +58,6 @@ public class BlueToothBurn extends Component {
 				Log.e("BlueToothBurn", "BlueTooth cannot be turned on!");
 			}
 		}
-		
-		
 	}
 
 	@Override
