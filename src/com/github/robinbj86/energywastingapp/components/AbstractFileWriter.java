@@ -83,12 +83,14 @@ public abstract class AbstractFileWriter extends Component {
 						Log.e("AbstractFileWriter thread", "close: " + e.getMessage(), e);
 					}
 					if (! file.delete()) {
-						Log.w("AbstractFileWriter thread", "cannot delete " + file.getAbsolutePath());
+						Log.w("AbstractFileWriter thread",
+								"cannot delete " + file.getAbsolutePath());
 					}
 				}
 			}
 			
-			Log.d("AbstractFileWriter thread", "Write thread stopped");
+			Log.d("AbstractFileWriter thread",
+					"Write thread stopped (" + file.getAbsolutePath() + ")");
 		}
 	}
 
