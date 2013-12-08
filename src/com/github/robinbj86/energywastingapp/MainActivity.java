@@ -30,6 +30,8 @@ public class MainActivity extends Activity {
 				new Flashlight(),
 				new Display(),
 				new WiFiDataTransfer(),
+				new GPSCoordSearch(),
+				new BlueToothBurn(),
 				new StillCamera(),
 				new VideoCamera(),
 				new RecordAudio()

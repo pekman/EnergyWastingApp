@@ -53,6 +53,10 @@ public abstract class Component implements OnCheckedChangeListener {
 		running = false;
 	}
 	
+	protected void markTurnedOn() {
+		uiControl.setChecked(true);
+	}
+	
 	/** Called when the application is no longer in the foreground */
 	public void onPause() {}
 	/** Called when the application cones back into the foreground */
