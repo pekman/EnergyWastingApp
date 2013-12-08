@@ -34,7 +34,9 @@ public class MainActivity extends Activity {
 				new BlueToothBurn(),
 				new StillCamera(),
 				new VideoCamera(),
-				new RecordAudio()
+				new RecordAudio(),
+				new AppDirFileWriter(),
+				new ExtStorageFileWriter()
 		};
 		this.components = components;
 
