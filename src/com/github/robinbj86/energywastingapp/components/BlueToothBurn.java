@@ -6,7 +6,7 @@ import android.util.Log;
 
 public class BlueToothBurn extends Component {
 
-	private BluetoothAdapter bluetooth = null;
+	private static BluetoothAdapter bluetooth = null;
 	private static final int REQUEST_ENABLE_BT = 1;
 	private static boolean running = false;
 	

@@ -9,8 +9,7 @@ import android.media.MediaPlayer;
 
 public class AudioPlay extends Component {
 	
-	private static final String TAG = null;
-	private MediaPlayer player;
+	private static MediaPlayer player;
 
 	private static boolean running = false;
 	
