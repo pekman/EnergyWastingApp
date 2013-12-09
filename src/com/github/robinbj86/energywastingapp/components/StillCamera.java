@@ -1,6 +1,7 @@
 package com.github.robinbj86.energywastingapp.components;
 
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -32,7 +33,11 @@ public class StillCamera extends AbstractCamera {
 			cam = getCamera();
 		
 		if (cam != null) {
-			turnOnFlashlight();
+			// FLASH_MODE_TORCH doesn't seem to work on Nexus S
+			// => use FLASH_MODE_ON, which uses flash at least part of the time
+			Parameters p = cam.getParameters();
+			p.setFlashMode(Parameters.FLASH_MODE_ON);
+			cam.setParameters(p);
 			
 			// create thread that takes pictures, but don't start it yet
 			thread = new Thread() {
