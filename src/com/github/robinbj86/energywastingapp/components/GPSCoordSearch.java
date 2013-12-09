@@ -13,7 +13,7 @@ import android.util.Log;
 public class GPSCoordSearch extends Component implements LocationListener{
 
 
-	private LocationManager lm = null;
+	private static LocationManager lm = null;
 	private static boolean running = false;
 	
 	@Override
