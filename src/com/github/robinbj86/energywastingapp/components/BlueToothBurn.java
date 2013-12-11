@@ -6,9 +6,9 @@ import android.util.Log;
 
 public class BlueToothBurn extends Component {
 
-	private static BluetoothAdapter bluetooth = null;
+	private volatile static BluetoothAdapter bluetooth = null;
 	private static final int REQUEST_ENABLE_BT = 1;
-	private static boolean running = false;
+	private volatile static boolean running = false;
 	
 	@Override
 	public String getName() { 
@@ -38,21 +38,26 @@ public class BlueToothBurn extends Component {
 				running = true;
 				
 				if(bluetooth.isEnabled()){
-					while(running){
-						try {
-							Thread.sleep(30);
-							if(bluetooth.isDiscovering()){
-								bluetooth.cancelDiscovery();
+					Thread thread = new Thread() {
+						@Override
+						public void run() {
+							while(running){
+								try {
+									Thread.sleep(30);
+									if(bluetooth.isDiscovering()){
+										bluetooth.cancelDiscovery();
+									}
+									bluetooth.startDiscovery();
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
 							}
-							bluetooth.startDiscovery();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
+							
+							bluetooth = null;
 						}
-						
-					}
+					};
+					thread.start();
 				}
-				
-				
 				
 			} else {
 				Log.e("BlueToothBurn", "BlueTooth cannot be turned on!");
@@ -71,5 +76,4 @@ public class BlueToothBurn extends Component {
 		
 	}
 
-	
 }

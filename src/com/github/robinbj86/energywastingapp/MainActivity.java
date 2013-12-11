@@ -9,6 +9,7 @@ import com.github.robinbj86.energywastingapp.components.*;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -27,7 +28,7 @@ public class MainActivity extends Activity {
 	 * The items are indexes of components array.
 	 */
 	private static final Set<Integer> maxPowerComponents = new HashSet<Integer>(Arrays.asList(new Integer[] {
-			0,1,2,3,4,5,  7,8,9
+			0,1,2,3,4,  6,  8,9,10,11
 		}));
 
 	@Override
@@ -46,6 +47,7 @@ public class MainActivity extends Activity {
 				new GPSCoordSearch(),
 				new BlueToothBurn(),
 				new AudioPlay(),
+				new TonePlay(),
 				new StillCamera(),
 				new VideoCamera(),
 				new RecordAudio(),
@@ -122,6 +124,18 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_TonePlay_settings:
+			new ToneSettingsDialog().show(getFragmentManager(), "ToneSettingsDialogFragment");
+			return true;
+		
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	@Override
