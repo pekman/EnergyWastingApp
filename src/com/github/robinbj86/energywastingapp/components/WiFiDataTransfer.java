@@ -10,8 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.Random;
-
-import android.os.Environment;
 import android.util.Log;
 
 
@@ -107,7 +105,6 @@ public class WiFiDataTransfer extends Component {
 	
 	private void downloadDataToSDCard() {
 		HttpURLConnection urlConnection = null;
-		File SDCardRoot = null;
 		File destinationFile = null;
 		FileOutputStream fileOutput = null;
 		InputStream inputStream = null;
@@ -117,13 +114,7 @@ public class WiFiDataTransfer extends Component {
 				urlConnection.setRequestMethod("GET");
 				urlConnection.setDoOutput(true);
 				urlConnection.connect();
-				Log.d("WiFiDataTransfer", Environment.getExternalStorageDirectory().getPath()+"/result/");
-				SDCardRoot = new File(Environment.getExternalStorageDirectory().getPath()+"/result/");
-				destinationFile = new File(SDCardRoot,"sitemap.xml");
-				if(!destinationFile.exists()){
-					destinationFile.createNewFile();
-					destinationFile.canWrite();
-				}
+				destinationFile = new File("/dev/null");
 				fileOutput = new FileOutputStream(destinationFile);
 				inputStream = urlConnection.getInputStream();
 				byte[] buffer = new byte[1024];
