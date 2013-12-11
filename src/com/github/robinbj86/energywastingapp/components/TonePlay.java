@@ -23,7 +23,7 @@ public class TonePlay extends Component {
 			AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC);
 
 	public static int waveform = WHITE_NOISE;
-	public static int frequency = 10000;
+	public static int frequency = 11025;
 	private AudioTrack track = null;
 
 	@Override

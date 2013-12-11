@@ -32,7 +32,8 @@ public class ToneSettingsDialog extends DialogFragment {
 		
 		((EditText) view.findViewById(R.id.editFreq)).setText(Integer.toString(TonePlay.frequency));
 		
-		builder.setView(view)
+		builder.setTitle("TonePlay settings")
+			.setView(view)
 			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					RadioGroup wf = (RadioGroup)

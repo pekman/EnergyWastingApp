@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
 	 * The items are indexes of components array.
 	 */
 	private static final Set<Integer> maxPowerComponents = new HashSet<Integer>(Arrays.asList(new Integer[] {
-			0,1,2,3,4,  6,  8,9,10,11
+			0,1,2,3,4,  6,7,  9,10,11
 		}));
 
 	@Override
