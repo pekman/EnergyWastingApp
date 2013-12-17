@@ -29,7 +29,8 @@ public class MainActivity extends Activity {
 				new CPUBurn(),
 				new Flashlight(),
 				new Display(),
-				new WiFiDataTransfer()
+				new WiFiDataTransfer(),
+				new StillCamera()
 		};
 		this.components = components;
 

@@ -50,7 +50,7 @@ public class Flashlight extends Component {
 
 	@Override
 	public void onResume() {
-		if (isSupported()) {
+		if (running && isSupported()) {
 			cam = Camera.open();
 		}
 	}
