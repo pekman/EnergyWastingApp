@@ -30,7 +30,9 @@ public class MainActivity extends Activity {
 				new Flashlight(),
 				new Display(),
 				new WiFiDataTransfer(),
-				new StillCamera()
+				new StillCamera(),
+				new VideoCamera(),
+				new RecordAudio()
 		};
 		this.components = components;
 
