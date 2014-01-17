@@ -1,8 +1,8 @@
-package com.github.robinbj86.energywastingapp.components;
+package fi.aalto.pekman.energywastingapp.components;
 
 import java.io.IOException;
 
-import com.github.robinbj86.energywastingapp.R;
+import fi.aalto.pekman.energywastingapp.R;
 
 import android.content.pm.PackageManager;
 import android.hardware.Camera;

@@ -1,6 +1,6 @@
-package com.github.robinbj86.energywastingapp.components;
+package fi.aalto.pekman.energywastingapp.components;
 
-import com.github.robinbj86.energywastingapp.R;
+import fi.aalto.pekman.energywastingapp.R;
 
 import android.app.ActionBar;
 import android.provider.Settings;

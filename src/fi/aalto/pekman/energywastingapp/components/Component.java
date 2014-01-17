@@ -1,4 +1,4 @@
-package com.github.robinbj86.energywastingapp.components;
+package fi.aalto.pekman.energywastingapp.components;
 
 import android.app.Activity;
 import android.widget.CompoundButton;

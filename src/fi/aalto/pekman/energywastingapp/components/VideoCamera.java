@@ -1,4 +1,4 @@
-package com.github.robinbj86.energywastingapp.components;
+package fi.aalto.pekman.energywastingapp.components;
 
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;

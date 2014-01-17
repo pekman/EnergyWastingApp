@@ -1,10 +1,11 @@
-package com.github.robinbj86.energywastingapp;
+package fi.aalto.pekman.energywastingapp;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.github.robinbj86.energywastingapp.components.*;
+import fi.aalto.pekman.energywastingapp.R;
+import fi.aalto.pekman.energywastingapp.components.*;
 
 import android.os.Bundle;
 import android.app.Activity;

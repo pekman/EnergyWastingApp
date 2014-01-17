@@ -1,4 +1,4 @@
-package com.github.robinbj86.energywastingapp.components;
+package fi.aalto.pekman.energywastingapp.components;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,0 +1,16 @@
+The application icon icon.svg is from Wikimedia Commons page
+http://commons.wikimedia.org/wiki/File:DIN_4844-2_Warnung_vor_heisser_Oberflaeche_D-W026.svg
+
+Licensing:
+    I, the copyright holder of this work, release this work into the public
+    domain. This applies worldwide.
+    In some countries this may not be legally possible; if so:
+    I grant anyone the right to use this work for any purpose, without any
+    conditions, unless such conditions are required by law.
+
+Authors:
+    Torsten Henning (2006) (original image)
+    Pekka Ekman (2014) (changed color)
+
+The shell script build-icon.sh can be used to build the icons as png files.
+The png files are written to res/drawable-*dpi/ic_launcher.png

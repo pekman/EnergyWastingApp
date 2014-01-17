@@ -1,6 +1,7 @@
-package com.github.robinbj86.energywastingapp;
+package fi.aalto.pekman.energywastingapp;
 
-import com.github.robinbj86.energywastingapp.components.TonePlay;
+import fi.aalto.pekman.energywastingapp.R;
+import fi.aalto.pekman.energywastingapp.components.TonePlay;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
