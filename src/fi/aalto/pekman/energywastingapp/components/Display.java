@@ -16,6 +16,7 @@ public class Display extends Component {
 	private float savedBrightness;
 	private int savedFlags;
 	private boolean savedActionBarShowing;
+	private float brightness = 1.0F;
 
 	@Override
 	public String getName() { return "Display"; }
@@ -42,11 +43,11 @@ public class Display extends Component {
 					Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL );
 		}
 		
-		// set brightness to maximum, keep screen on, and turn on fullscreen
+		// set brightness, keep screen on, and turn on fullscreen
 		WindowManager.LayoutParams layoutParams = context.getWindow().getAttributes();
 		savedBrightness = layoutParams.screenBrightness;
 		savedFlags = layoutParams.flags;
-		layoutParams.screenBrightness = 1.0F;
+		layoutParams.screenBrightness = brightness;
 		layoutParams.flags |=
 				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
 				WindowManager.LayoutParams.FLAG_FULLSCREEN;
@@ -102,6 +103,16 @@ public class Display extends Component {
 	public void onPause() {
 		stop();
 		markTurnedOff();
+	}
+
+	@Override public boolean isAdjustable() { return true; }
+	@Override public int getAdjustmentMin() { return 10; }
+	@Override public int getAdjustmentMax() { return 100; }
+	
+	@Override
+	protected String onAdjustmentChange(int value) {
+		brightness = value / 100.0F;
+		return super.onAdjustmentChange(value);
 	}
 
 }

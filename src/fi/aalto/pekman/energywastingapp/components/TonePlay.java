@@ -24,17 +24,21 @@ public class TonePlay extends Component {
 
 	public static int waveform = WHITE_NOISE;
 	public static int frequency = 11025;
+
 	private AudioTrack track = null;
+	private int volume = 100;
 
 	@Override
 	public void start() {
 		int numSamples;
+		short maxValue = (short)(((int)Short.MAX_VALUE * volume) / 100);
 		
 		// generate audio
 		Log.d("TonePlay", "Generating audio (sample rate " + SAMPLE_RATE + " Hz)");
 		switch (waveform) {
 		case WHITE_NOISE:
-			numSamples = SAMPLE_RATE * 2;
+			Log.d("TonePlay", "White noise (volume " + volume + "%)");
+			numSamples = SAMPLE_RATE;
 			track = new AudioTrack(
 					AudioManager.STREAM_MUSIC,
 					SAMPLE_RATE,
@@ -43,11 +47,13 @@ public class TonePlay extends Component {
 					numSamples * 2,  // 1 second
 					AudioTrack.MODE_STATIC );
 			{
-				byte[] buffer = new byte[numSamples * 2];
-				new Random().nextBytes(buffer);
-				track.write(buffer, 0, numSamples * 2);
+				short[] buffer = new short[numSamples];
+				Random rng = new Random();
+				for (int i=0; i<numSamples; i++) {
+					buffer[i] = (short)(rng.nextInt(maxValue*2 + 2) - maxValue - 1);
+				}
+				track.write(buffer, 0, numSamples);
 			}
-			Log.d("TonePlay", "White noise");
 			break;
 		
 		case SINE_WAVE:
@@ -64,19 +70,19 @@ public class TonePlay extends Component {
 			{
 				short[] buffer = new short[numSamples];
 				if (waveform == SINE_WAVE) {
-					Log.d("TonePlay", "Sine wave " + frequency + " Hz");
+					Log.d("TonePlay", "Sine wave " + frequency + " Hz (volume " + volume + "%)");
 					for (int i=0; i<numSamples; i++) {
 						double angle = 2.0 * Math.PI * ((float) i) / ((float) numSamples);
-						buffer[i] = (short) (Short.MAX_VALUE * ((float) Math.sin(angle)));
+						buffer[i] = (short) (maxValue * ((float) Math.sin(angle)));
 					}
 				}
 				else { // SQUARE_WAVE
-					Log.d("TonePlay", "Square wave " + frequency + " Hz");
+					Log.d("TonePlay", "Square wave " + frequency + " Hz (volume " + volume + "%)");
 					int i=0;
 					while (i < numSamples/2)
-						buffer[i++] = Short.MAX_VALUE;
+						buffer[i++] = maxValue;
 					while (i < numSamples)
-						buffer[i++] = Short.MIN_VALUE;
+						buffer[i++] = (short)(-maxValue - 1);
 				}
 				track.write(buffer, 0, numSamples);
 			}
@@ -102,6 +108,19 @@ public class TonePlay extends Component {
 			track.release();
 			track = null;
 		}
+	}
+
+	@Override public boolean isAdjustable() { return true; }
+	@Override public int getAdjustmentMax() { return 100; }
+
+	@Override
+	public String onAdjustmentChange(int value) {
+		volume = value;
+		if (running) {
+			stop();
+			start();
+		}
+		return super.onAdjustmentChange(value);
 	}
 
 }

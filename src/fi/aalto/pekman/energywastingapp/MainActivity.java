@@ -9,12 +9,14 @@ import fi.aalto.pekman.energywastingapp.components.*;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -56,14 +58,16 @@ public class MainActivity extends Activity {
 				new ExtStorageFileWriter()
 		};
 		this.components = components;
-
+		
+		ViewGroup list = (ViewGroup) findViewById(R.id.MainLinearLayout);
+		
 		for (Component component : components) {
-
-			// create a switch control for the component
-			Switch control = new Switch(this);
-			control.setLayoutParams(new LayoutParams(
-					LayoutParams.MATCH_PARENT,
-					LayoutParams.WRAP_CONTENT ));
+			
+			// add switch and adjustment controls for the component
+			ViewGroup layout = (ViewGroup)
+					getLayoutInflater().inflate(R.layout.component_list_item, list, false);
+			
+			Switch control = (Switch) layout.findViewById(R.id.ComponentListItemSwitch);
 			control.setChecked(false);
 			control.setText(component.getName());
 
@@ -71,13 +75,39 @@ public class MainActivity extends Activity {
 				control.setEnabled(false);
 				control.setClickable(false);
 			}
-
-			// add control to the UI
-			((ViewGroup) findViewById(R.id.MainLinearLayout)).addView(control);
-
-			// add the component object as listener for on/off toggle events
+			
+			// add the component as listener for switch on/off events
 			control.setOnCheckedChangeListener(component);
 			component.uiControl = control;
+			
+			// if the component is adjustable, init adjustment control
+			ViewGroup adjustmentLayout = (ViewGroup)
+					layout.findViewById(R.id.ComponentListItemAdjustment);
+			if (component.isAdjustable()) {
+				int min = component.getAdjustmentMin();
+				int max = component.getAdjustmentMax();
+				int step = component.getAdjustmentStep();
+				SeekBar adj = (SeekBar)
+						layout.findViewById(R.id.ComponentListItemAdjustmentSeekBar);
+				TextView label = (TextView)
+						layout.findViewById(R.id.ComponentListItemAdjustmentLabel);
+				
+				label.setWidth(
+						label.getPaddingLeft() + label.getPaddingRight() +
+						(int) Math.ceil( label.getPaint().measureText("100%") ));
+				component.uiAdjustmentValueLabel = label;
+				
+				// add the component as listener for adjustment change events
+				adj.setMax((max-min)/step);
+				adj.setOnSeekBarChangeListener(component);
+				adj.setProgress(component.getAdjustmentDefault());
+			}
+			else {
+				layout.removeView(adjustmentLayout);
+			}
+			
+			// add controls to the UI
+			list.addView(layout);
 		}
 	}
 

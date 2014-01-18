@@ -2,18 +2,25 @@ package fi.aalto.pekman.energywastingapp.components;
 
 import android.app.Activity;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 /**
  * Abstract class for components (GPS, wi-fi, camera, etc.)
  */
-public abstract class Component implements OnCheckedChangeListener {
+public abstract class Component
+	implements OnCheckedChangeListener, OnSeekBarChangeListener {
 	
 	/** Application context */
 	public static Activity context;
 	
 	/** GUI control associated with the component */
 	public CompoundButton uiControl;
+	
+	/** GUI control that shows the current adjustment value */
+	public TextView uiAdjustmentValueLabel;
 	
 	/** Indicates, whether the component is currently turned on */
 	public boolean running = false;
@@ -26,6 +33,48 @@ public abstract class Component implements OnCheckedChangeListener {
 	 * (e.g. if the functionality is not supported)
 	 */
 	public boolean isSupported() { return true; }
+	
+	/** Returns true if energy use of the component can be adjusted */
+	public boolean isAdjustable() { return false; }
+	
+	/** Returns minimum adjustment value */
+	public int getAdjustmentMin() { return 1; }
+	
+	/** Returns maximum adjustment value */
+	public int getAdjustmentMax() {
+		throw new UnsupportedOperationException("getAdjustmentMax() not supported");
+	}
+	
+	/** Returns initial adjustment value */
+	public int getAdjustmentDefault() { return getAdjustmentMax(); }
+	
+	/** Returns adjustment increment/decrement step size */
+	public int getAdjustmentStep() { return 1; }
+	
+	/**
+	 * Callback called when the adjustment is changed.
+	 * 
+	 * @return the string displayed next to the adjustment seek bar
+	 */
+	protected String onAdjustmentChange(int value) {
+		return Math.round(value * getAdjustmentStep() * (100.0f / getAdjustmentMax())) + "%";
+	}
+	
+	// OnSeekBarChangeListener events:
+	@Override public void onStopTrackingTouch(SeekBar seekBar) {}
+	@Override public void onStartTrackingTouch(SeekBar seekBar) {}
+	
+	/**
+	 * This is used for attaching this object to a seek bar.
+	 *
+	 * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android.widget.SeekBar, int, boolean)
+	 */
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		int value = (progress / getAdjustmentStep()) + getAdjustmentMin();
+		String labelValue = onAdjustmentChange(value);
+		uiAdjustmentValueLabel.setText(labelValue);
+	}
 	
 	/**
 	 * This is used for attaching this object to a toggle button.
