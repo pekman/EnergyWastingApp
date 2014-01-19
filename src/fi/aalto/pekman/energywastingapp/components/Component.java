@@ -51,12 +51,11 @@ public abstract class Component
 	/** Returns adjustment increment/decrement step size */
 	public int getAdjustmentStep() { return 1; }
 	
-	/**
-	 * Callback called when the adjustment is changed.
-	 * 
-	 * @return the string displayed next to the adjustment seek bar
-	 */
-	protected String onAdjustmentChange(int value) {
+	/** Callback called when the adjustment is changed */
+	protected void onAdjustmentChange(int value) {}
+	
+	/** Returns the string displayed next to the adjustment seek bar */
+	protected String getAdjustmentDisplayValue(int value) {
 		return Math.round(value * getAdjustmentStep() * (100.0f / getAdjustmentMax())) + "%";
 	}
 	
@@ -72,8 +71,8 @@ public abstract class Component
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		int value = (progress / getAdjustmentStep()) + getAdjustmentMin();
-		String labelValue = onAdjustmentChange(value);
-		uiAdjustmentValueLabel.setText(labelValue);
+		onAdjustmentChange(value);
+		uiAdjustmentValueLabel.setText( getAdjustmentDisplayValue(value) );
 	}
 	
 	/**

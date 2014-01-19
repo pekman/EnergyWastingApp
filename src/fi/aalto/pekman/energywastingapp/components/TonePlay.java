@@ -114,13 +114,12 @@ public class TonePlay extends Component {
 	@Override public int getAdjustmentMax() { return 100; }
 
 	@Override
-	public String onAdjustmentChange(int value) {
+	public void onAdjustmentChange(int value) {
 		volume = value;
 		if (running) {
 			stop();
 			start();
 		}
-		return super.onAdjustmentChange(value);
 	}
 
 }

@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:divider="?android:attr/dividerVertical"
-            android:showDividers="middle" >
+            android:showDividers="middle"
+            android:paddingBottom="20dp" >
 
             <Button
                 android:id="@+id/MaxPowerButton"

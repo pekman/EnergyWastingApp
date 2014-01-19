@@ -110,9 +110,8 @@ public class Display extends Component {
 	@Override public int getAdjustmentMax() { return 100; }
 	
 	@Override
-	protected String onAdjustmentChange(int value) {
+	protected void onAdjustmentChange(int value) {
 		brightness = value / 100.0F;
-		return super.onAdjustmentChange(value);
 	}
 
 }

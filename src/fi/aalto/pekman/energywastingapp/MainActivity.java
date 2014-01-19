@@ -9,7 +9,6 @@ import fi.aalto.pekman.energywastingapp.components.*;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
