@@ -54,7 +54,8 @@ public class MainActivity extends Activity {
 				new VideoCamera(),
 				new RecordAudio(),
 				new AppDirFileWriter(),
-				new ExtStorageFileWriter()
+				new ExtStorageFileWriter(),
+				new Vibration()
 		};
 		this.components = components;
 		
