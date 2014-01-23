@@ -8,14 +8,68 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class ToneSettingsDialog extends DialogFragment {
 
+	private static class EditFreqTextWatcher implements TextWatcher {
+		
+		private final SeekBar freqSeekBar;
+		
+		public EditFreqTextWatcher(SeekBar freqSeekBar) {
+			this.freqSeekBar = freqSeekBar;
+		}
+		
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void afterTextChanged(Editable s) {
+			try {
+				int freq = Integer.parseInt(s.toString());
+				freqSeekBar.setProgress(freq - 1);
+			} catch (NumberFormatException e) {}
+		}
+	}
+	
+	private static class FreqSeekBarChangeListener implements OnSeekBarChangeListener {
+		
+		private final EditText editFreq;
+		
+		public FreqSeekBarChangeListener(EditText editFreq) {
+			this.editFreq = editFreq;
+		}
+		
+		@Override public void onStopTrackingTouch(SeekBar seekBar) {}
+		@Override public void onStartTrackingTouch(SeekBar seekBar) {}
+		
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			if (fromUser) {
+				int freq = progress + 1;
+				editFreq.setText(Integer.toString(freq));
+			}
+		}
+	}
+	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -31,7 +85,15 @@ public class ToneSettingsDialog extends DialogFragment {
 		}
 		((RadioGroup) view.findViewById(R.id.waveformRadioGroup)).check(id);
 		
-		((EditText) view.findViewById(R.id.editFreq)).setText(Integer.toString(TonePlay.frequency));
+		EditText editFreq = (EditText) view.findViewById(R.id.editFreq);
+		editFreq.setText(Integer.toString(TonePlay.frequency));
+		
+		SeekBar freqSeekBar = (SeekBar) view.findViewById(R.id.freqSeekBar);
+		freqSeekBar.setMax((TonePlay.SAMPLE_RATE / 2) - 1);
+		freqSeekBar.setProgress(TonePlay.frequency - 1);
+		freqSeekBar.setOnSeekBarChangeListener(new FreqSeekBarChangeListener(editFreq));
+		
+		editFreq.addTextChangedListener(new EditFreqTextWatcher(freqSeekBar));
 		
 		builder.setTitle("TonePlay settings")
 			.setView(view)

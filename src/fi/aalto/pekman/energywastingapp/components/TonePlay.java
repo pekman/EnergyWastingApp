@@ -19,8 +19,9 @@ public class TonePlay extends Component {
 	public static final int SINE_WAVE = 1;
 	public static final int SQUARE_WAVE = 2;
 
-	private static final int SAMPLE_RATE =
+	public static final int SAMPLE_RATE =
 			AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC);
+	private static final int MAX_NUM_SAMPLES = SAMPLE_RATE;
 
 	public static int waveform = WHITE_NOISE;
 	public static int frequency = 11025;
@@ -28,10 +29,24 @@ public class TonePlay extends Component {
 	private AudioTrack track = null;
 	private int volume = 100;
 
+	/** Returns least common multiple of a and b */
+	private static long lcm(int a, int b) {
+		int gcd = a;
+		int rem = b;
+		while (rem > 0) {
+			int tmp = rem;
+			rem = gcd % rem;
+			gcd = tmp;
+		}
+		
+		return a * (long)(b / gcd);
+	}
+
 	@Override
 	public void start() {
 		int numSamples;
 		short maxValue = (short)(((int)Short.MAX_VALUE * volume) / 100);
+		short minValue = (short)(((int)Short.MIN_VALUE * volume) / 100);
 		
 		// generate audio
 		Log.d("TonePlay", "Generating audio (sample rate " + SAMPLE_RATE + " Hz)");
@@ -58,7 +73,8 @@ public class TonePlay extends Component {
 		
 		case SINE_WAVE:
 		case SQUARE_WAVE:
-			numSamples = SAMPLE_RATE / frequency;
+			long optimalNumSamples = lcm(SAMPLE_RATE, frequency*2) / frequency;
+			numSamples = (int) Math.min(optimalNumSamples, MAX_NUM_SAMPLES);
 			track = new AudioTrack(
 					AudioManager.STREAM_MUSIC,
 					SAMPLE_RATE,
@@ -68,23 +84,25 @@ public class TonePlay extends Component {
 					AudioTrack.MODE_STATIC );
 			
 			{
+				double period = SAMPLE_RATE / (double)frequency;
 				short[] buffer = new short[numSamples];
 				if (waveform == SINE_WAVE) {
 					Log.d("TonePlay", "Sine wave " + frequency + " Hz (volume " + volume + "%)");
 					for (int i=0; i<numSamples; i++) {
-						double angle = 2.0 * Math.PI * ((float) i) / ((float) numSamples);
+						double angle = 2.0 * Math.PI * ((double) i) / period;
 						buffer[i] = (short) (maxValue * ((float) Math.sin(angle)));
 					}
 				}
 				else { // SQUARE_WAVE
 					Log.d("TonePlay", "Square wave " + frequency + " Hz (volume " + volume + "%)");
-					int i=0;
-					while (i < numSamples/2)
-						buffer[i++] = maxValue;
-					while (i < numSamples)
-						buffer[i++] = (short)(-maxValue - 1);
+					double halfPeriod = period / 2.0;
+					for (int i=0; i < numSamples; i++) {
+						double rem = ((double) i) % period;
+						buffer[i] = (rem < halfPeriod) ? maxValue : minValue;
+					}
 				}
 				track.write(buffer, 0, numSamples);
+				Log.d("TonePlay", "period: " + period + " (" + (period/(SAMPLE_RATE/1000.0)) + " ms)");
 			}
 			Log.d("TonePlay", "" + numSamples + " samples (" +
 					(numSamples / (SAMPLE_RATE/1000.0)) + " ms)");
