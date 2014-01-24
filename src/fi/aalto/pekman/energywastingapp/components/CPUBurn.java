@@ -1,9 +1,6 @@
 package fi.aalto.pekman.energywastingapp.components;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.util.regex.Pattern;
-
+import android.os.Process;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,15 +9,74 @@ public class CPUBurn extends Component {
 	@Override
 	public String getName() { return "CPUburn"; }
 	
+	private static final boolean supported;
+	private static final int SIGSTOP;
+	private static final int SIGCONT;
+	
+	@Override
+	public boolean isSupported() { return supported; }
+	
+	
+	private static final int PERIOD = 500; // milliseconds
+	
+	private volatile int onTime = PERIOD;
+	private LimiterThread thread = null;
+	
 	private int[] processes;
+	
+	private class LimiterThread extends Thread {
+		
+		public volatile boolean stop = false;
+		
+		@Override
+		public synchronized void run() {
+			while (! stop) {
+				if (onTime == PERIOD) {
+					// onTime == 100% => don't send signals, wait for change
+					try {
+						wait();
+					} catch (InterruptedException e) {}
+				}
+				else {
+					// onTime < 100%
+					
+					// stop processes for (PERIOD - onTime) milliseconds
+					for (int pid : processes)
+						Process.sendSignal(pid, SIGSTOP);
+					
+					try {
+						wait(PERIOD - onTime);
+					} catch (InterruptedException e) {}
+					if (stop)
+						break;
+					
+					// start processes for onTime milliseconds
+					for (int pid : processes)
+						Process.sendSignal(pid, SIGCONT);
+					
+					try {
+						wait(onTime);
+					} catch (InterruptedException e) {}
+				}
+			}
+		}
+	}
 	
 	@Override
 	public void start() {
 		if (processes != null)
 			return;
 		
-		// start a process for each CPU core and store the PIDs
 		int numCores = getNumCores();
+		if (numCores == -1) {
+			Log.w("CPUBurn", "Unable to determine number of cores. Using 1 as fallback value.");
+			numCores = 1;
+		}
+		else {
+			Log.d("CPUBurn", numCores + " cores");
+		}
+		
+		// start a process for each CPU core and store the PIDs
 		processes = new int[numCores];
 		for (int i=0; i<numCores; i++) {
 			int pid = 0;
@@ -44,6 +100,10 @@ public class CPUBurn extends Component {
 			
 			processes[i] = pid;
 		}
+		
+		// start limiter thread
+		thread = new LimiterThread();
+		thread.start();
 	}
 	
 	@Override
@@ -57,57 +117,66 @@ public class CPUBurn extends Component {
 				Log.d("CPUBurn", "stopped process (PID=" + pid + ")");
 			}
 		}
-		processes = null;
-	}
-	
-	
-	/**
-	 * Gets the number of cores available in this device, across all processors.
-	 * Requires: Ability to peruse the filesystem at "/sys/devices/system/cpu"
-	 *
-	 * This code is copied from
-	 * <a href="http://forums.makingmoneywithandroid.com/android-development/280-%5Bhow-%5D-get-number-cpu-cores-android-device.html"
-	 *    >this forum post</a>.
-	 *
-	 * @return The number of cores, or 1 if failed to get result
-	 */
-	private int getNumCores() {
-
-		//Private Class to display only CPU devices in the directory listing
-		class CpuFilter implements FileFilter {
-			@Override
-			public boolean accept(File pathname) {
-				//Check if filename is "cpu", followed by a single digit number
-				if(Pattern.matches("cpu[0-9]+", pathname.getName())) {
-					return true;
-				}
-				return false;
-			}
+		
+		synchronized (thread) {
+			thread.stop = true;
+			thread.notify();
 		}
 		
-		try {
-			//Get directory containing CPU info
-			File dir = new File("/sys/devices/system/cpu/");
-			//Filter to only list the devices we care about
-			File[] files = dir.listFiles(new CpuFilter());
-			Log.d("getNumCores", "CPU Count: "+files.length);
-			//Return the number of cores (virtual CPU devices)
-			return files.length;
-		} catch(Exception e) {
-			//Print exception
-			Log.d("getNumCores", "CPU Count: Failed.");
-			e.printStackTrace();
-			//Default to return 1 core
-			return 1;
+		processes = null;
+		thread = null;
+	}
+	
+	@Override public boolean isAdjustable() { return true; }
+	@Override public int getAdjustmentMin() { return 1; }
+	@Override public int getAdjustmentMax() { return PERIOD; }
+	
+	@Override
+	protected void onAdjustmentChange(int value) {
+		onTime = value;
+		
+		if (thread != null) {
+			synchronized (thread) {
+				thread.notify();
+			}
 		}
 	}
 	
-
+	
 	/** Starts a new CPUburn process and returns its PID or -1 on error */
 	private native int startCPUBurn();
 	
+	/**
+	 * Returns the number of processor cores.
+	 * 
+	 * @return the number of cores, or -1 if there was a problem
+	 */
+	private native int getNumCores();
+	
+	private native static int getSIGSTOP();
+	private native static int getSIGCONT();
+	
+	private native static boolean checkNeonSupport();
+	
 	static {
-		System.loadLibrary("arm-cpuburn");
+		// Try to load native library. If succeeded, check if the CPU supports
+		// ARM NEON instructions, which are required by the native code.
+		boolean success;
+		try {
+			System.loadLibrary("cpuburn");
+			success = checkNeonSupport();
+		} catch (UnsatisfiedLinkError e) {
+			success = false;
+		}
+		
+		if (success) {
+			SIGSTOP = getSIGSTOP();
+			SIGCONT = getSIGCONT();
+		} else {
+			SIGSTOP = SIGCONT = -1;
+		}
+		
+		supported = success;
 	}
 
 }
