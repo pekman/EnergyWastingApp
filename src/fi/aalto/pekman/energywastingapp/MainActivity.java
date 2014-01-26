@@ -35,7 +35,6 @@ public class MainActivity extends Activity {
 				new WiFiDataTransfer(),
 				new GPSCoordSearch(),
 				new BlueToothBurn(),
-				new AudioPlay(),
 				new TonePlay(),
 				new StillCamera(),
 				new VideoCamera(),
