@@ -1,6 +1,8 @@
 package fi.aalto.pekman.energywastingapp.components;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -11,7 +13,7 @@ import android.widget.TextView;
  * Abstract class for components (GPS, wi-fi, camera, etc.)
  */
 public abstract class Component
-	implements OnCheckedChangeListener, OnSeekBarChangeListener {
+	implements OnCheckedChangeListener, OnSeekBarChangeListener, View.OnClickListener {
 	
 	/** Application context */
 	public static Activity context;
@@ -90,6 +92,23 @@ public abstract class Component
 			stop();
 			running = false;
 		}
+	}
+	
+	/** Return settings dialog if the component has one */
+	public DialogFragment getSettingsDialog() {
+		return null;
+	}
+	
+	/**
+	 * This is used for attaching this object to a button.
+	 *
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
+	@Override
+	public void onClick(View v) {
+		getSettingsDialog().show(
+				context.getFragmentManager(),
+				getName() + "DialogFragment");
 	}
 	
 	/**

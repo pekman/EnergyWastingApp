@@ -9,10 +9,10 @@ import fi.aalto.pekman.energywastingapp.components.*;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.app.DialogFragment;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -106,6 +106,17 @@ public class MainActivity extends Activity {
 				layout.removeView(adjustmentLayout);
 			}
 			
+			// if the component has a settings dialog, make settings button open it
+			Button settingsButton = (Button)
+					layout.findViewById(R.id.ComponentListSettingsButton);
+			DialogFragment dialog = component.getSettingsDialog();
+			if (dialog != null) {
+				settingsButton.setOnClickListener(component);
+			}
+			else {
+				layout.removeView(settingsButton);
+			}
+			
 			// add controls to the UI
 			list.addView(layout);
 		}
@@ -148,25 +159,6 @@ public class MainActivity extends Activity {
 				}
 			},
 			anythingTurnedOn ? 2000 : 0);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.action_TonePlay_settings:
-			new ToneSettingsDialog().show(getFragmentManager(), "ToneSettingsDialogFragment");
-			return true;
-		
-		default:
-			return super.onOptionsItemSelected(item);
-		}
 	}
 
 	@Override

@@ -2,10 +2,25 @@ package fi.aalto.pekman.energywastingapp.components;
 
 import java.util.Random;
 
+import fi.aalto.pekman.energywastingapp.R;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 
 public class TonePlay extends Component {
@@ -15,16 +30,16 @@ public class TonePlay extends Component {
 		return "TonePlay";
 	}
 
-	public static final int WHITE_NOISE = 0;
-	public static final int SINE_WAVE = 1;
-	public static final int SQUARE_WAVE = 2;
+	private static final int WHITE_NOISE = 0;
+	private static final int SINE_WAVE = 1;
+	private static final int SQUARE_WAVE = 2;
 
 	public static final int SAMPLE_RATE =
 			AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC);
 	private static final int MAX_NUM_SAMPLES = SAMPLE_RATE;
 
-	public static int waveform = WHITE_NOISE;
-	public static int frequency = 11025;
+	private static int waveform = WHITE_NOISE;
+	private static int frequency = 11025;
 
 	private AudioTrack track = null;
 	private int volume = 100;
@@ -137,6 +152,111 @@ public class TonePlay extends Component {
 		if (running) {
 			stop();
 			start();
+		}
+	}
+
+	@Override
+	public DialogFragment getSettingsDialog() {
+		return new SettingsDialog();
+	}
+
+	public static class SettingsDialog extends DialogFragment {
+
+		/** Moves seekbar when textbox is edited */
+		private static class EditFreqTextWatcher implements TextWatcher {
+			
+			private final SeekBar freqSeekBar;
+			
+			public EditFreqTextWatcher(SeekBar freqSeekBar) {
+				this.freqSeekBar = freqSeekBar;
+			}
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				try {
+					int freq = Integer.parseInt(s.toString());
+					freqSeekBar.setProgress(freq - 1);
+				} catch (NumberFormatException e) {}
+			}
+		}
+		
+		/** Updates textbox value when seekbar is moved */
+		private static class FreqSeekBarChangeListener implements OnSeekBarChangeListener {
+			
+			private final EditText editFreq;
+			
+			public FreqSeekBarChangeListener(EditText editFreq) {
+				this.editFreq = editFreq;
+			}
+			
+			@Override public void onStopTrackingTouch(SeekBar seekBar) {}
+			@Override public void onStartTrackingTouch(SeekBar seekBar) {}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (fromUser) {
+					int freq = progress + 1;
+					editFreq.setText(Integer.toString(freq));
+				}
+			}
+		}
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			LayoutInflater inflater = getActivity().getLayoutInflater();
+			View view = inflater.inflate(R.layout.dialog_tone_settings, null);
+			
+			int id;
+			switch (waveform) {
+				case WHITE_NOISE: id = R.id.waveformWhiteNoise; break;
+				case SINE_WAVE:   id = R.id.waveformSineWave;   break;
+				case SQUARE_WAVE: id = R.id.waveformSquareWave; break;
+				default: id = -1; break;
+			}
+			((RadioGroup) view.findViewById(R.id.waveformRadioGroup)).check(id);
+			
+			EditText editFreq = (EditText) view.findViewById(R.id.editFreq);
+			editFreq.setText(Integer.toString(frequency));
+			
+			SeekBar freqSeekBar = (SeekBar) view.findViewById(R.id.freqSeekBar);
+			freqSeekBar.setMax((SAMPLE_RATE / 2) - 1);
+			freqSeekBar.setProgress(frequency - 1);
+			freqSeekBar.setOnSeekBarChangeListener(new FreqSeekBarChangeListener(editFreq));
+			
+			editFreq.addTextChangedListener(new EditFreqTextWatcher(freqSeekBar));
+			
+			builder.setTitle("TonePlay settings")
+				.setView(view)
+				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						RadioGroup wf = (RadioGroup)
+								((Dialog) dialog).findViewById(R.id.waveformRadioGroup);
+						switch (wf.getCheckedRadioButtonId()) {
+							case R.id.waveformSineWave:   waveform = SINE_WAVE;   break;
+							case R.id.waveformSquareWave: waveform = SQUARE_WAVE; break;
+							default:
+							case R.id.waveformWhiteNoise: waveform = WHITE_NOISE; break;
+						}
+						
+						EditText t = (EditText) ((Dialog) dialog).findViewById(R.id.editFreq);
+						frequency = Integer.parseInt(t.getText().toString());
+						Log.d("TonePlay.SettingsDialog",
+								"Setting frequency to " + frequency + " Hz");
+					}
+				})
+				.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						SettingsDialog.this.getDialog().cancel();
+					}
+				});
+			
+			return builder.create();
 		}
 	}
 
