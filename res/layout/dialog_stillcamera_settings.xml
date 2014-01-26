@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Flash mode:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <RadioGroup
+        android:id="@+id/flashModeRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/flashModeTorch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Torch (stays on)" />
+
+        <RadioButton
+            android:id="@+id/flashModeOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="On (flashes)" />
+
+        <RadioButton
+            android:id="@+id/flashModeOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Off" />
+
+        <RadioButton
+            android:id="@+id/flashModeRedEye"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Red-eye reduction" />
+        </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Torch is the preferred mode, but it may not work in all devices."
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</LinearLayout>
