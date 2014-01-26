@@ -1,9 +1,5 @@
 package fi.aalto.pekman.energywastingapp;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import fi.aalto.pekman.energywastingapp.R;
 import fi.aalto.pekman.energywastingapp.components.*;
 
@@ -16,7 +12,6 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -24,14 +19,6 @@ public class MainActivity extends Activity {
 	 * List of components in the order they will be displayed.
 	 */
 	private Component[] components;
-
-	/**
-	 * Components that should be turned on for maximum power consumption.
-	 * The items are indexes of components array.
-	 */
-	private static final Set<Integer> maxPowerComponents = new HashSet<Integer>(Arrays.asList(new Integer[] {
-			0,1,2,3,4,  6,7,  9,10,11
-		}));
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -128,37 +115,6 @@ public class MainActivity extends Activity {
 				c.markTurnedOff();
 			}
 		}
-	}
-
-	private Toast toast;
-
-	public void maxPowerConsumption(View view) {
-		boolean anythingTurnedOn = false;
-		
-		// turn off components not in the list
-		for (int i=0; i < components.length; i++) {
-			if (components[i].running && ! maxPowerComponents.contains(i)) {
-				components[i].markTurnedOff();
-				anythingTurnedOn = true;
-			}
-		}
-		
-		toast = Toast.makeText(this, "Please wait...", Toast.LENGTH_LONG);
-		toast.show();
-		
-		// turn on components in the list (after 2s delay if anything was turned on)
-		((ViewGroup) findViewById(R.id.MainLinearLayout)).postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					for (int i : maxPowerComponents) {
-						if (! components[i].running && components[i].isSupported()) {
-							components[i].markTurnedOn();
-						}
-					}
-					toast.cancel();
-				}
-			},
-			anythingTurnedOn ? 2000 : 0);
 	}
 
 	@Override

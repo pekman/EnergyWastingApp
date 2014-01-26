@@ -24,14 +24,6 @@
             android:paddingBottom="20dp" >
 
             <Button
-                android:id="@+id/MaxPowerButton"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="maxPowerConsumption"
-                android:text="Maximum power consumption" />
-
-            <Button
                 android:id="@+id/TurnAllOffButton"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="match_parent"
