@@ -2,7 +2,9 @@ package fi.aalto.pekman.energywastingapp.components;
 
 import fi.aalto.pekman.energywastingapp.R;
 
-import android.app.ActionBar;
+import android.annotation.TargetApi;
+import android.support.v7.app.ActionBar;
+import android.os.Build;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
@@ -21,26 +23,30 @@ public class Display extends Component {
 	@Override
 	public String getName() { return "Display"; }
 
+	@TargetApi(8)
 	@Override
 	public void start() {
-		// set brightness mode to manual if it's automatic
-		int brightnessMode;
-		try {
-			brightnessMode = Settings.System.getInt(
-					context.getContentResolver(),
-					Settings.System.SCREEN_BRIGHTNESS_MODE);
-			savedBrightnessMode = brightnessMode;
-		} catch (SettingNotFoundException e) {
-			Log.e("Display.start()", e.toString(), e);
-			markTurnedOff();
-			return;
-		}
 		
-		if (brightnessMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
-			Settings.System.putInt(
-					context.getContentResolver(),
-					Settings.System.SCREEN_BRIGHTNESS_MODE,
-					Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL );
+		// set brightness mode to manual if it's automatic
+		if (Build.VERSION.SDK_INT >= 8) {
+			int brightnessMode;
+			try {
+				brightnessMode = Settings.System.getInt(
+						context.getContentResolver(),
+						Settings.System.SCREEN_BRIGHTNESS_MODE);
+				savedBrightnessMode = brightnessMode;
+			} catch (SettingNotFoundException e) {
+				Log.e("Display.start()", e.toString(), e);
+				markTurnedOff();
+				return;
+			}
+			
+			if (brightnessMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
+				Settings.System.putInt(
+						context.getContentResolver(),
+						Settings.System.SCREEN_BRIGHTNESS_MODE,
+						Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL );
+			}
 		}
 		
 		// set brightness, keep screen on, and turn on fullscreen
@@ -59,7 +65,7 @@ public class Display extends Component {
 		View whiteScreen = context.findViewById(R.id.WhiteScreen);
 		whiteScreen.setVisibility(View.VISIBLE);
 		// hide action bar
-		ActionBar ab = context.getActionBar();
+		ActionBar ab = context.getSupportActionBar();
 		savedActionBarShowing = ab.isShowing();
 		if (savedActionBarShowing)
 			ab.hide();
@@ -74,14 +80,17 @@ public class Display extends Component {
 		isStateSaved = true;
 	}
 
+	@TargetApi(8)
 	@Override
 	public void stop() {
 		// restore screen state
 		if (isStateSaved) {
-			Settings.System.putInt(
-					context.getContentResolver(),
-					Settings.System.SCREEN_BRIGHTNESS_MODE,
-					savedBrightnessMode );
+			if (Build.VERSION.SDK_INT >= 8) {
+				Settings.System.putInt(
+						context.getContentResolver(),
+						Settings.System.SCREEN_BRIGHTNESS_MODE,
+						savedBrightnessMode );
+			}
 			
 			WindowManager.LayoutParams layoutParams = context.getWindow().getAttributes();
 			layoutParams.screenBrightness = savedBrightness;
@@ -89,7 +98,7 @@ public class Display extends Component {
 			context.getWindow().setAttributes(layoutParams);
 			
 			if (savedActionBarShowing)
-				context.getActionBar().show();
+				context.getSupportActionBar().show();
 			
 			isStateSaved = false;
 		}
@@ -105,7 +114,10 @@ public class Display extends Component {
 		markTurnedOff();
 	}
 
-	@Override public boolean isAdjustable() { return true; }
+	@Override public boolean isAdjustable() {
+		// brightness can only be adjusted on API level >= 8
+		return Build.VERSION.SDK_INT >= 8;
+	}
 	@Override public int getAdjustmentMin() { return 10; }
 	@Override public int getAdjustmentMax() { return 100; }
 	

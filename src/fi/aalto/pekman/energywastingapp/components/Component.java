@@ -1,7 +1,7 @@
 package fi.aalto.pekman.energywastingapp.components;
 
-import android.app.Activity;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
@@ -16,7 +16,7 @@ public abstract class Component
 	implements OnCheckedChangeListener, OnSeekBarChangeListener, View.OnClickListener {
 	
 	/** Application context */
-	public static Activity context;
+	public static ActionBarActivity context;
 	
 	/** GUI control associated with the component */
 	public CompoundButton uiControl;
@@ -107,7 +107,7 @@ public abstract class Component
 	@Override
 	public void onClick(View v) {
 		getSettingsDialog().show(
-				context.getFragmentManager(),
+				context.getSupportFragmentManager(),
 				getName() + "DialogFragment");
 	}
 	

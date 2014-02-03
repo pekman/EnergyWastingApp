@@ -1,6 +1,8 @@
 package fi.aalto.pekman.energywastingapp.components;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.os.Vibrator;
 
 public class Vibration extends Component {
@@ -15,9 +17,13 @@ public class Vibration extends Component {
 	@Override
 	public String getName() { return "Vibration"; }
 	
+	@TargetApi(11)
 	@Override
 	public boolean isSupported() {
-		return vibrator.hasVibrator();
+		if (Build.VERSION.SDK_INT >= 11)
+			return vibrator.hasVibrator();
+		else
+			return true;
 	}
 	
 	@Override

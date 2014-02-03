@@ -156,7 +156,7 @@ public class CPUBurn extends Component {
 	private native static int getSIGSTOP();
 	private native static int getSIGCONT();
 	
-	private native static boolean checkNeonSupport();
+	private native static boolean isCpuSupported();
 	
 	static {
 		// Try to load native library. If succeeded, check if the CPU supports
@@ -164,7 +164,7 @@ public class CPUBurn extends Component {
 		boolean success;
 		try {
 			System.loadLibrary("cpuburn");
-			success = checkNeonSupport();
+			success = isCpuSupported();
 		} catch (UnsatisfiedLinkError e) {
 			success = false;
 		}

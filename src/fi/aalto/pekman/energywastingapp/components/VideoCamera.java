@@ -1,7 +1,9 @@
 package fi.aalto.pekman.energywastingapp.components;
 
+import android.annotation.TargetApi;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -15,6 +17,7 @@ public class VideoCamera extends AbstractCamera {
 	/** UI component that shows the preview image from camera */
 	private class Preview extends AbstractCamera.Preview {
 		
+		@TargetApi(8)
 		protected void onStart(SurfaceHolder holder) {
 			cam.unlock();
 			
@@ -23,12 +26,14 @@ public class VideoCamera extends AbstractCamera {
 			recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 			
 			// record video only with the highest supported profile
-			CamcorderProfile p = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
-			recorder.setOutputFormat(p.fileFormat);
-			recorder.setVideoFrameRate(p.videoFrameRate);
-			recorder.setVideoSize(p.videoFrameWidth, p.videoFrameHeight);
-			recorder.setVideoEncodingBitRate(p.videoBitRate);
-			recorder.setVideoEncoder(p.videoCodec);
+			if (Build.VERSION.SDK_INT >= 8) {
+				CamcorderProfile p = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+				recorder.setOutputFormat(p.fileFormat);
+				recorder.setVideoFrameRate(p.videoFrameRate);
+				recorder.setVideoSize(p.videoFrameWidth, p.videoFrameHeight);
+				recorder.setVideoEncodingBitRate(p.videoBitRate);
+				recorder.setVideoEncoder(p.videoCodec);
+			}
 			
 			recorder.setOutputFile("/dev/null");
 			recorder.setPreviewDisplay(holder.getSurface());

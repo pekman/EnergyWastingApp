@@ -7,6 +7,7 @@ import fi.aalto.pekman.energywastingapp.R;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -28,15 +29,23 @@ public abstract class AbstractCamera extends Component {
 		
 		public Preview() {
 			super(context);
-			getHolder().addCallback(this);
+			
+			SurfaceHolder h = getHolder();
+			h.addCallback(this);
+			
+			// this deprecated method needs to be called on older API levels
+			if(Build.VERSION.SDK_INT < 11)
+				h.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+			
 		}
 		
 		public void surfaceCreated(SurfaceHolder holder) {
 			Log.d("Camera", "Surface created");
+			
 			try {
 				cam.setPreviewDisplay(holder);
 				cam.startPreview();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				Log.d("Camera", "Error setting camera preview: " + e.getMessage(), e);
 				onError();
 				return;

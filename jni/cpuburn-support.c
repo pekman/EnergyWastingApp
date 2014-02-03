@@ -67,7 +67,7 @@ jint Java_fi_aalto_pekman_energywastingapp_components_CPUBurn_getSIGCONT(void)
 }
 
 // returns true if the processor supports ARM NEON instructions
-jboolean Java_fi_aalto_pekman_energywastingapp_components_CPUBurn_checkNeonSupport(void)
+jboolean Java_fi_aalto_pekman_energywastingapp_components_CPUBurn_isCpuSupported(void)
 {
 	return (android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM) &&
 			(android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON);

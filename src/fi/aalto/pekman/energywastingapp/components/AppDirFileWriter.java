@@ -9,7 +9,12 @@ public class AppDirFileWriter extends AbstractFileWriter {
 
 	@Override
 	protected File getPath() {
-		return context.getCacheDir();
+		File dir = context.getCacheDir();
+		if (dir == null)
+			dir = context.getFilesDir();
+		if (dir == null)
+			dir = new File("/tmp");
+		return dir;
 	}
 
 }

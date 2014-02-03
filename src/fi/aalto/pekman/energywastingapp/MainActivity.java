@@ -1,19 +1,18 @@
 package fi.aalto.pekman.energywastingapp;
 
-import fi.aalto.pekman.energywastingapp.R;
 import fi.aalto.pekman.energywastingapp.components.*;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 
 	/**
 	 * List of components in the order they will be displayed.
@@ -53,9 +52,15 @@ public class MainActivity extends Activity {
 			ViewGroup layout = (ViewGroup)
 					getLayoutInflater().inflate(R.layout.component_list_item, list, false);
 			
-			Switch control = (Switch) layout.findViewById(R.id.ComponentListItemSwitch);
+			CompoundButton control = (CompoundButton)
+					layout.findViewById(R.id.ComponentListItemSwitch);
 			control.setChecked(false);
-			control.setText(component.getName());
+			
+			// set either a separate label or Switch text to show component name
+			TextView tv = (TextView) layout.findViewById(R.id.ComponentListItemName);
+			if (tv == null)
+				tv = control;
+			tv.setText(component.getName());
 
 			if (! component.isSupported()) {
 				control.setEnabled(false);
