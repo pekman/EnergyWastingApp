@@ -93,17 +93,21 @@ public class ExtStorageFileWriter extends Component {
 			File mountFile = new File("/proc/mounts");
 			if(mountFile.exists()){
 				Scanner scanner = new Scanner(mountFile);
-				while (scanner.hasNext()) {
-					String line = scanner.nextLine();
-					if (line.startsWith("/dev/block/vold/")) {
-						String[] lineElements = line.split(" ");
-						String element = lineElements[1];
-
-						// don't add the default mount path
-						// it's already in the list.
-						if (!element.equals("/mnt/sdcard"))
-							mMounts.add(element);
+				try {
+					while (scanner.hasNextLine()) {
+						String line = scanner.nextLine();
+						if (line.startsWith("/dev/block/vold/")) {
+							String[] lineElements = line.split(" ");
+							String element = lineElements[1];
+	
+							// don't add the default mount path
+							// it's already in the list.
+							if (!element.equals("/mnt/sdcard"))
+								mMounts.add(element);
+						}
 					}
+				} finally {
+					scanner.close();
 				}
 			}
 		} catch (Exception e) {
@@ -114,17 +118,21 @@ public class ExtStorageFileWriter extends Component {
 			File voldFile = new File("/system/etc/vold.fstab");
 			if(voldFile.exists()){
 				Scanner scanner = new Scanner(voldFile);
-				while (scanner.hasNext()) {
-					String line = scanner.nextLine();
-					if (line.startsWith("dev_mount")) {
-						String[] lineElements = line.split(" ");
-						String element = lineElements[2];
-
-						if (element.contains(":"))
-							element = element.substring(0, element.indexOf(":"));
-						if (!element.equals("/mnt/sdcard"))
-							mVold.add(element);
+				try {
+					while (scanner.hasNextLine()) {
+						String line = scanner.nextLine();
+						if (line.startsWith("dev_mount")) {
+							String[] lineElements = line.split(" ");
+							String element = lineElements[2];
+	
+							if (element.contains(":"))
+								element = element.substring(0, element.indexOf(":"));
+							if (!element.equals("/mnt/sdcard"))
+								mVold.add(element);
+						}
 					}
+				} finally {
+					scanner.close();
 				}
 			}
 		} catch (Exception e) {
