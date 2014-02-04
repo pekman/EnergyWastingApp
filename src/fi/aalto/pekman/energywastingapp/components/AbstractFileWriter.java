@@ -17,7 +17,7 @@ public abstract class AbstractFileWriter extends Component {
 	protected abstract File getPath();
 
 	/** Returns maximum file size */
-	protected long getMaxFileSize() { return 128 * 1024 * 1024; }
+	protected long getMaxFileSize() { return 64 * 1024 * 1024; }
 
 
 	protected WriterThread thread = null;
