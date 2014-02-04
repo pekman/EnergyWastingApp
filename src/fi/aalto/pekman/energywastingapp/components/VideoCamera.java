@@ -33,6 +33,9 @@ public class VideoCamera extends AbstractCamera {
 				recorder.setVideoSize(p.videoFrameWidth, p.videoFrameHeight);
 				recorder.setVideoEncodingBitRate(p.videoBitRate);
 				recorder.setVideoEncoder(p.videoCodec);
+			} else {
+				recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+				recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
 			}
 			
 			recorder.setOutputFile("/dev/null");
@@ -42,6 +45,8 @@ public class VideoCamera extends AbstractCamera {
 				recorder.prepare();
 			} catch (Exception e) {
 				Log.e("VideoCamera.Preview.onStart()", e.getMessage(), e);
+				recorder.reset();
+				recorder.release();
 				recorder = null;
 				onError();
 				return;
@@ -79,6 +84,7 @@ public class VideoCamera extends AbstractCamera {
 		if (recorder != null) {
 			recorder.stop();
 			recorder.release();
+			recorder = null;
 		}
 		if (cam != null) {
 			cam.lock();

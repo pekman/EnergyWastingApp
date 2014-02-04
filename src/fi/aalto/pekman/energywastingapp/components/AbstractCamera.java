@@ -36,17 +36,15 @@ public abstract class AbstractCamera extends Component {
 			// this deprecated method needs to be called on older API levels
 			if(Build.VERSION.SDK_INT < 11)
 				h.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-			
 		}
 		
 		public void surfaceCreated(SurfaceHolder holder) {
 			Log.d("Camera", "Surface created");
 			
 			try {
-				cam.setPreviewDisplay(holder);
 				cam.startPreview();
 			} catch (Exception e) {
-				Log.d("Camera", "Error setting camera preview: " + e.getMessage(), e);
+				Log.e("Camera", "Error starting camera preview: " + e.getMessage(), e);
 				onError();
 				return;
 			}
@@ -63,7 +61,7 @@ public abstract class AbstractCamera extends Component {
 		}
 		
 		/** Called when the camera has been initialized. */
-		protected abstract void onStart(SurfaceHolder holder);
+		protected void onStart(SurfaceHolder holder) {}
 		
 		/** Called when there was an error initializing the camera. */
 		protected void onError() {}
@@ -91,14 +89,14 @@ public abstract class AbstractCamera extends Component {
 
 	@Override
 	public void stop() {
+		if (preview != null) {
+			((ViewGroup) context.findViewById(R.id.MainFrameLayout)).removeView(preview);
+			preview = null;
+		}
 		if (cam != null) {
 			cam.stopPreview();
 			cam.release();
 			cam = null;
-		}
-		if (preview != null) {
-			((ViewGroup) context.findViewById(R.id.MainFrameLayout)).removeView(preview);
-			preview = null;
 		}
 	}
 

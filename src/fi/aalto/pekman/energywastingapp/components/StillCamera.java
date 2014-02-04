@@ -1,5 +1,7 @@
 package fi.aalto.pekman.energywastingapp.components;
 
+import java.io.IOException;
+
 import fi.aalto.pekman.energywastingapp.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -28,6 +30,15 @@ public class StillCamera extends AbstractCamera {
 	private class Preview extends AbstractCamera.Preview {
 		
 		protected void onStart(SurfaceHolder holder) {
+			try {
+				cam.setPreviewDisplay(holder);
+			} catch (IOException e) {
+				Log.e("StillCamera.Preview.onStart()",
+						"Error setting camera preview: " + e.getMessage(), e);
+				onError();
+				return;
+			}
+			
 			// start taking pictures
 			thread.start();
 		}
