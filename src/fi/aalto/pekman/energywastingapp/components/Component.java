@@ -116,12 +116,16 @@ public abstract class Component
 	 * Does not need to be called in {@link #stop()}.
 	 */
 	public void markTurnedOff() {
+		uiControl.setOnCheckedChangeListener(null);
 		uiControl.setChecked(false);
+		uiControl.setOnCheckedChangeListener(this);
 		running = false;
 	}
 	
 	public void markTurnedOn() {
+		uiControl.setOnCheckedChangeListener(null);
 		uiControl.setChecked(true);
+		uiControl.setOnCheckedChangeListener(this);
 		running = true;
 	}
 	
