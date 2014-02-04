@@ -1,7 +1,5 @@
 package fi.aalto.pekman.energywastingapp.components;
 
-import java.io.IOException;
-
 import fi.aalto.pekman.energywastingapp.R;
 
 import android.content.pm.PackageManager;
