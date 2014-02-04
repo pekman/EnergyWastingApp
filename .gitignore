@@ -2,3 +2,7 @@
 /gen/
 /libs/
 /obj/local/
+/.classpath
+/proguard-project.txt
+/project.properties
+
