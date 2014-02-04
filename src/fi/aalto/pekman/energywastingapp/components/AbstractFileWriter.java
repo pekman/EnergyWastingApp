@@ -17,7 +17,7 @@ public abstract class AbstractFileWriter extends Component {
 	protected abstract File getPath();
 
 	/** Returns maximum file size */
-	protected long getMaxFileSize() { return 64 * 1024 * 1024; }
+	protected long getMaxFileSize() { return 32 * 1024 * 1024; }
 
 
 	protected WriterThread thread = null;
@@ -32,6 +32,8 @@ public abstract class AbstractFileWriter extends Component {
 	protected class WriterThread extends Thread {
 		
 		private void onError() {
+			stopThread = true;
+			
 			context.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
